@@ -7,6 +7,7 @@ public class Application {
 	public static void main(String[] args) throws Exception{
 		Dispatcher dispatcher = new Dispatcher(readProcess());
 		System.out.println(dispatcher.get_allProccesses().getProcessList().size());// test için yazıldı
+		System.out.println(Dispatcher.timer);
 	}
 	
 	private static Queue readProcess()  throws Exception{

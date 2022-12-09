@@ -16,4 +16,11 @@ public class Queue {
 	public List getProcessList() {//test
 		return processList;
 	}
+	
+	public Queue sort(Queue queue) {// Varış zamanına göre sıralanır
+		Queue sortedQueue = new Queue();
+		
+		
+		return sortedQueue;
+	}
 }
