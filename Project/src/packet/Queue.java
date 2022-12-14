@@ -6,16 +6,16 @@ import java.util.List;
 
 public class Queue {
 	
-	private List<Process> processList = new LinkedList<Process>();
+	private List<myProcess> processList = new LinkedList<myProcess>();
 	
 	public Queue(){
 	}
 	
-	public void addProcess(Process process) {
+	public void addProcess(myProcess process) {
 		processList.add(process);
 	}
 	
-	public List<Process> getProcessList() {//test
+	public List<myProcess> getProcessList() {//test
 		return processList;
 	}
 	

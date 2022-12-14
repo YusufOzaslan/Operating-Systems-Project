@@ -1,5 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/packet/Application.java=UTF-8
 encoding//src/packet/Dispatcher.java=UTF-8
-encoding//src/packet/Process.java=UTF-8
+encoding//src/packet/Java_Process.java=UTF-8
 encoding//src/packet/Queue.java=UTF-8
+encoding//src/packet/myProcess.java=UTF-8
