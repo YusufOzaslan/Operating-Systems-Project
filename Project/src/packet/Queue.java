@@ -47,5 +47,11 @@ public class Queue {
 
 		return queue;
 	}
+
+	//Kuyruk boş mu değil mi diye kontrol eder
+	public boolean isEmpty() {
+		
+		return processList.isEmpty();
+	}
 	
 }

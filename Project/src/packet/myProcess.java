@@ -21,7 +21,9 @@ public class myProcess {
 	private int _arrivalTime;
 	private int _priority;
 	private int _processorTime;
+	private int _remainingTime;
 	private int _id;// gerek kalmayabilir
+	
 
 	private int _colorId;
 	static int colorNum = -1;
@@ -34,6 +36,7 @@ public class myProcess {
 		_arrivalTime = Integer.parseInt(arrivalTime);
 		_priority = Integer.parseInt(priority);
 		_processorTime = Integer.parseInt(processorTime);
+		_remainingTime = Integer.parseInt(processorTime);
 		_status=status.Hazir;
 
 		//her proses oluşturulduğunda farklı bir renk atanır
@@ -47,7 +50,9 @@ public class myProcess {
 	public void execute() {
 		// çalıştırılmak istenen proses için bu fonksiyon kullanılır
 		// proses oluşturduğumuz jar dosyasını çalıştırır
-
+		
+		//her process çalıştırıldığında process'in kalan ömrü 1 saniye azaltılır
+		_remainingTime--;
 		
 		String priority = String.valueOf(this._priority);
 		String remainingTime = String.valueOf(this._arrivalTime - Dispatcher.timer);
@@ -57,7 +62,7 @@ public class myProcess {
 		
 		try {
 
-	           runProcess(parameter);
+	           runProcess(parameter); 
 	    } 
 		catch (Exception e) {
 	    	e.printStackTrace();
@@ -93,10 +98,14 @@ public class myProcess {
 		System.out.println(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandı 	 " + ANSI_RESET);
 	}	
 	
+	public boolean isComplete() {
+	    return _remainingTime == 0;
+	  }
 	
 	public int get_arrivalTime() { return _arrivalTime; }
 	public int get_priority() { return _priority; }
 	public int get_processorTime() { return _processorTime; }
+	public int getRemainingTime() { return _remainingTime; }
 	public int get_colorId() { return this._colorId; }
 	public void set_arrivalTime(int _arrivalTime) {
 		this._arrivalTime = _arrivalTime;
