@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import java.util.stream.*;  
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -36,23 +37,76 @@ public class Dispatcher {
 		
 	}
 	
-	
+	//fonksiyon tamamlanmadı
 	public void run() {
 		
 		//dispatcher çalıştırıldığında zamanlayıcı da çalıştırılır, her saniye timer'ı 1 arttırır
 		timer = 0;
 		chronometer.scheduleAtFixedRate(new TimerTask() {
 		      public void run() {
-		    	timer++;			        
+		    	  //Her saniye ekrana timer'ın değerini göstermek için aşağıdaki satır kullanılır
+		    	  //System.out.println("Timer: " + timer);
+		    	  timer++;		
 		      }
 		    }, 0, 1000);
 		
-		split_sort(get_allProccesses());
+		
+		for (myProcess process : get_allProccesses().getProcessList()) {
+			
+			//process gelene kadar beklenir
+			wait(process.get_arrivalTime() - timer);
+			
+			//0 öncelikli processler FCFS ile çalışır
+			if (process.get_priority() == 0) {
+								
+				get_p0().addProcess(process);
+									
+				process.execute(); //burada process çalıştırıldıktan sonra process bitene kadar geçen sürede loop'un devam edip zamanı gelen diğer processlerin de uygun kuyrukları yerleşmesi
+				//mantıklı gibi ama tam yapamadım
+				//thread kullanılabilir process.start() ile
+				
+					
+					
+			}
+			//1, 2 veya 3 öncelikli processlere feedback sistemine gider
+			else {
+				feedback(process);
+			}
+		}
+		
+	}
+	
+	//fonksiyon tamamlanmadı
+	private void feedback(myProcess process) {
+		
+		switch(process.get_priority()) {
+		
+		case 1:
+			processList1.addProcess(process);
+			break;
+		
+		case 2: 
+			processList2.addProcess(process);
+			break;
+			
+		case 3:
+			processList3.addProcess(process);
+			break;
+			
+		default:
+			System.out.println("Gecersiz priority degeri");
+	        break;
+		
+		
+		
+		
+		}
+		
+		
 		
 		
 		
 	}
-	
 	
 		
 	
@@ -60,6 +114,8 @@ public class Dispatcher {
 		return _allProccesses;
 	}
 	
+	//process listesini önceden sortlayıp öncelik kuyruklarına koymak iyi bir fikir olmayabilir
+	//processler'in zamanı gelince uygun kuyruklarına göndermek daha mantıklı olur gibi geliyor
 	public void split_sort(Queue processList) {
 		
 		// _allProccesse'de bulunan prosesler öncelikli kuyruklara eklenir(_priority değişkenine göre)
@@ -102,7 +158,7 @@ public class Dispatcher {
 	// İclerindeki return harici hersey debug icindir
 	
 	
-	public  Queue get_p0() {
+	public Queue get_p0() {
 		
 		/*/ <---------------------------------------DEBUG--------------------------------------->
 		System.out.println("P0 Cagirildi");
@@ -179,15 +235,12 @@ public class Dispatcher {
 		return processList3;
 	}
 	
-	
-	public void feedBack() {
-		
-		
-		
-		
-		
-		
-	
+	public static void wait(int seconds) {
+	    try {
+	    	TimeUnit.SECONDS.sleep(seconds);
+	    } catch (InterruptedException e) {
+	        // handle exception
+	    }
 	}
 	
 	

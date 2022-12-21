@@ -16,7 +16,7 @@ enum status {
 	  sonlandi
 	}
 
-public class myProcess {
+public class myProcess extends Thread{
 	
 	private int _arrivalTime;
 	private int _priority;
@@ -47,18 +47,27 @@ public class myProcess {
 
 	}
 	
+	//thread kullanılacaksa run() ile oluşturulabilir ama emin değilim kullanıp kullanılmayacağına
+	@Override
+	public void run() {				
+		execute();	
+	}
+	
 	public void execute() {
 		// çalıştırılmak istenen proses için bu fonksiyon kullanılır
 		// proses oluşturduğumuz jar dosyasını çalıştırır
 		
-		//her process çalıştırıldığında process'in kalan ömrü 1 saniye azaltılır
-		_remainingTime--;
+		
 		
 		String priority = String.valueOf(this._priority);
+		
+		//burdaki remainingTime'ın hesaplanması doğru olmaz çünkü askıya alınmış bir processin çalışmadığı zamanlarda da remainingTime'ı azalıyormuş gib oluyor
+		//onun yerine _remainingTime diye bir property yaptım, her çalıştığı saniye decreaseRemainingTime() fonksiyonunu çalıştırcak 
 		String remainingTime = String.valueOf(this._arrivalTime - Dispatcher.timer);
+		
 		String colorId = String.valueOf((this._colorId));
 		String jar = "java -jar Java_Process.jar";
-		String parameter = jar + " " + priority + " " + remainingTime + " " + colorId;
+		String parameter = jar + " " + priority + " " + get_RemainingTime() + " " + colorId;
 		
 		try {
 
@@ -69,11 +78,15 @@ public class myProcess {
 	    }
 	}
 	
-	private static void runProcess(String command) throws Exception {
+	//bu fonksiyon static'ti ama şimdilik değiştirdim deneme için
+	private void runProcess(String command) throws Exception {
+		
 		// yeni bir proses oluşturulur ve çalıştırılır
         Process pro = Runtime.getRuntime().exec(command);
+    	
         printLines(pro.getInputStream());
         printLines(pro.getErrorStream());
+    
         pro.waitFor();// proses bitene kadar beklenir
       }
 	
@@ -105,7 +118,7 @@ public class myProcess {
 	public int get_arrivalTime() { return _arrivalTime; }
 	public int get_priority() { return _priority; }
 	public int get_processorTime() { return _processorTime; }
-	public int getRemainingTime() { return _remainingTime; }
+	public int get_RemainingTime() { return _remainingTime; }
 	public int get_colorId() { return this._colorId; }
 	public void set_arrivalTime(int _arrivalTime) {
 		this._arrivalTime = _arrivalTime;
@@ -116,6 +129,9 @@ public class myProcess {
 	public void set_processorTime(int _processorTime) {
 		this._processorTime = _processorTime;
 	}
+	public void set_status(status _status) { this._status = _status; }
+	
+	public void decreaseRemainingTime() { this._remainingTime--; }
 	
 }
 	
