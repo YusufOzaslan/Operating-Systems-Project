@@ -1,8 +1,11 @@
 package packet;
 
+import static packet.ColoredSystemOutPrintln.ANSI_RESET;
+import static packet.ColoredSystemOutPrintln.COLORS;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
-
+import java.io.*;
 
 
 public class Application {
@@ -13,8 +16,8 @@ public class Application {
 		
 		
 		
-		Dispatcher dispatcher = new Dispatcher(readProcess());
-		dispatcher.run();
+		/*Dispatcher dispatcher = new Dispatcher(readProcess());
+		dispatcher.execute();*/
 		
 		
 		
@@ -31,9 +34,10 @@ public class Application {
 		<---------------TEST-------------------------->/*/
 		
 		// process test
-		
 		myProcess mp = new myProcess("5", "5", "5");
 		mp.execute();
+		myProcess mp2 = new myProcess("2", "2", "2");
+		mp2.execute();
 		
 		
 		// process test son

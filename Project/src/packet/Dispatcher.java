@@ -29,6 +29,7 @@ public class Dispatcher {
 	private final int quantum = 1;
 	
 	public static int timer;
+	public static int idCounter = 0;// yeni prosesler üretildikçe değeri arttırılır(myProcess sınıfında kullanılır)
 	
 	
 	public Dispatcher(Queue allProccesses){

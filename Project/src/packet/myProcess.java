@@ -24,41 +24,32 @@ public class myProcess extends Thread{
 	private int _remainingTime;
 	private int _id;// gerek kalmayabilir
 	
-
 	private int _colorId;
 	static int colorNum = -1;
 
 	public status _status;
 
-
-	public myProcess(String arrivalTime, String priority, String processorTime){
-		
+	public myProcess(String arrivalTime, String priority, String processorTime){		
 		_arrivalTime = Integer.parseInt(arrivalTime);
 		_priority = Integer.parseInt(priority);
 		_processorTime = Integer.parseInt(processorTime);
 		_remainingTime = Integer.parseInt(processorTime);
 		_status=status.Hazir;
-
+		
+		_id = Dispatcher.idCounter;
+		Dispatcher.idCounter++;
+		
 		//her proses oluşturulduğunda farklı bir renk atanır
 		colorNum++;
 		if (colorNum > COLORS.length) { colorNum = 0; }
 		_colorId = colorNum;
 
-
-	}
-	
-	//thread kullanılacaksa run() ile oluşturulabilir ama emin değilim kullanıp kullanılmayacağına
-	@Override
-	public void run() {				
-		execute();	
 	}
 	
 	public void execute() {
 		// çalıştırılmak istenen proses için bu fonksiyon kullanılır
 		// proses oluşturduğumuz jar dosyasını çalıştırır
-		
-		
-		
+
 		String priority = String.valueOf(this._priority);
 		
 		//burdaki remainingTime'ın hesaplanması doğru olmaz çünkü askıya alınmış bir processin çalışmadığı zamanlarda da remainingTime'ı azalıyormuş gib oluyor
@@ -66,8 +57,9 @@ public class myProcess extends Thread{
 		String remainingTime = String.valueOf(this._arrivalTime - Dispatcher.timer);
 		
 		String colorId = String.valueOf((this._colorId));
+		String processId = String.valueOf((this._id));
 		String jar = "java -jar Java_Process.jar";
-		String parameter = jar + " " + priority + " " + get_RemainingTime() + " " + colorId;
+		String parameter = jar + " " + processId + " " + priority + " " + get_RemainingTime() + " " + colorId;
 		
 		try {
 
@@ -90,7 +82,7 @@ public class myProcess extends Thread{
         pro.waitFor();// proses bitene kadar beklenir
       }
 	
-    private static void printLines(InputStream ins) throws Exception {
+    private void printLines(InputStream ins) throws Exception {
     	// Ana programdan ayrı çalıştırılan proseslerin bilgileri ekrana yazdırılır
         String line = null;
         BufferedReader in = new BufferedReader(
