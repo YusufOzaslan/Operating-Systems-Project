@@ -14,35 +14,22 @@ public class Application {
 	
 	public static void main(String[] args) throws Exception{
 		
+		Dispatcher dispatcher = new Dispatcher(readProcess());
+		dispatcher.runDispatcher();
+		//<----------------TEST-------------------->
 		
 		
-		/*Dispatcher dispatcher = new Dispatcher(readProcess());
-		dispatcher.execute();*/
-		
-		
-		
-		/*/<----------------TEST-------------------->
-		
-		
-		dispatcher.split_sort(dispatcher.get_allProccesses());
+		/*/dispatcher.split_sort(dispatcher.get_allProccesses());
 		dispatcher.get_p0();	
 		dispatcher.get_p1();
 		dispatcher.get_p2();
 		dispatcher.get_p3();
 		
 			
-		<---------------TEST-------------------------->/*/
-		
+		//<---------------TEST-------------------------->*/
 		// process test
-		myProcess mp = new myProcess("5", "5", "5");
-		mp.execute();
-		myProcess mp2 = new myProcess("2", "2", "2");
-		mp2.execute();
-		
-		
-		// process test son
-		
-		
+		/*myProcess mp = new myProcess("5", "5", "5");
+		mp.execute();*/
 	}
 	
 	private static Queue readProcess()  throws Exception{

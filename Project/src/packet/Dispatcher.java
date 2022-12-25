@@ -15,32 +15,53 @@ import java.util.TimerTask;
 public class Dispatcher {
 	
 	//timer'ı çalıştırmak için gereken nesne
-	private static Timer chronometer = new Timer();
+	//private static Timer chronometer = new Timer();
 	
 	private Queue _allProccesses = new Queue();
 
 	// Öncelikli kuyruklar
-	private Queue processList0 = new Queue();
-	private Queue processList1 = new Queue();
-	private Queue processList2 = new Queue();
-	private Queue processList3 = new Queue();
+	private Queue processQueue0 = new Queue();
+	private Queue processQueue1 = new Queue();
+	private Queue processQueue2 = new Queue();
+	private Queue processQueue3 = new Queue();
 	
 	//temel zamanlama kuantumu, feedback sıralayıcısı için kullanılır
 	private final int quantum = 1;
 	
-	public static int timer;
+	public static int timer = 0;
 	public static int idCounter = 0;// yeni prosesler üretildikçe değeri arttırılır(myProcess sınıfında kullanılır)
 	
+	private int temp;
 	
 	public Dispatcher(Queue allProccesses){
 		_allProccesses = allProccesses;
-		
-		
 	}
 	
-	//fonksiyon tamamlanmadı
-	public void run() {
+	public void runDispatcher() {
+		split_sort(_allProccesses);
+			
+		for (myProcess process : processQueue0.getProcessList()) {
+			System.out.println(process.get_arrivalTime() + " " + timer);
+			//0 öncelikli processler FCFS ile çalışır
+			if (process.get_arrivalTime() <= timer) {
+				for (int i = process.get_processorTime(); i >= 0; i--) {
+					temp = process.get_processorTime();
+					temp--;
+					process.execute();
+					process.set_processorTime(temp);
+					timer++;
+				}
+					
+			}
+			//1, 2 veya 3 öncelikli processlere feedback sistemine gider
+			else {
+				//feedback(process);
+				timer++;
+			}
+		}
 		
+		
+		/*
 		//dispatcher çalıştırıldığında zamanlayıcı da çalıştırılır, her saniye timer'ı 1 arttırır
 		timer = 0;
 		chronometer.scheduleAtFixedRate(new TimerTask() {
@@ -49,10 +70,10 @@ public class Dispatcher {
 		    	  //System.out.println("Timer: " + timer);
 		    	  timer++;		
 		      }
-		    }, 0, 1000);
+		    }, 0, 1000);*/
 		
-		
-		for (myProcess process : get_allProccesses().getProcessList()) {
+		/*
+		for (myProcess process : _allProccesses.getProcessList()) {
 			
 			//process gelene kadar beklenir
 			wait(process.get_arrivalTime() - timer);
@@ -62,18 +83,18 @@ public class Dispatcher {
 								
 				get_p0().addProcess(process);
 									
-				process.execute(); //burada process çalıştırıldıktan sonra process bitene kadar geçen sürede loop'un devam edip zamanı gelen diğer processlerin de uygun kuyrukları yerleşmesi
+				process.execute(); //burada process çalıştırıldıktan sonra process
+				//bitene kadar geçen sürede loop'un devam edip 
+				//zamanı gelen diğer processlerin de uygun kuyrukları yerleşmesi
 				//mantıklı gibi ama tam yapamadım
 				//thread kullanılabilir process.start() ile
-				
-					
 					
 			}
 			//1, 2 veya 3 öncelikli processlere feedback sistemine gider
 			else {
 				feedback(process);
 			}
-		}
+		}*/
 		
 	}
 	
@@ -83,36 +104,21 @@ public class Dispatcher {
 		switch(process.get_priority()) {
 		
 		case 1:
-			processList1.addProcess(process);
+			processQueue1.addProcess(process);
 			break;
 		
 		case 2: 
-			processList2.addProcess(process);
+			processQueue2.addProcess(process);
 			break;
 			
 		case 3:
-			processList3.addProcess(process);
+			processQueue3.addProcess(process);
 			break;
 			
 		default:
 			System.out.println("Gecersiz priority degeri");
-	        break;
-		
-		
-		
-		
-		}
-		
-		
-		
-		
-		
-	}
-	
-		
-	
-	public Queue get_allProccesses() {// test
-		return _allProccesses;
+	        break;		
+		}			
 	}
 	
 	//process listesini önceden sortlayıp öncelik kuyruklarına koymak iyi bir fikir olmayabilir
@@ -120,24 +126,24 @@ public class Dispatcher {
 	public void split_sort(Queue processList) {
 		
 		// _allProccesse'de bulunan prosesler öncelikli kuyruklara eklenir(_priority değişkenine göre)
-		System.out.println("Spilit Cagirildi");	
+		System.out.println("Split Cagirildi");	
 		for(int i=0;i<processList.getProcessList().size() ; i++)
 		{
 			
 			int tempPriority=processList.getProcessList().get(i).get_priority();
 		
 			if( tempPriority == 0) {
-				processList0.addProcess(processList.getProcessList().get(i));
+				processQueue0.addProcess(processList.getProcessList().get(i));
 			}
 			
 			else if( tempPriority == 1) {
-				processList1.addProcess(processList.getProcessList().get(i));
+				processQueue1.addProcess(processList.getProcessList().get(i));
 			}
 			else if( tempPriority == 2) {
-				processList2.addProcess(processList.getProcessList().get(i));
+				processQueue2.addProcess(processList.getProcessList().get(i));
 			}
 			else if( tempPriority == 3) {
-				processList3.addProcess(processList.getProcessList().get(i));
+				processQueue3.addProcess(processList.getProcessList().get(i));
 			}
 			else {
 				System.out.println("...Gecersiz priority degiskeni...");
@@ -146,17 +152,15 @@ public class Dispatcher {
 		}
 		
 		//Yukarıda priortiy'e gore sıraladık ardından kendi iclerinde arrivalTime'a gore sıralamak icin bunları kullandık --->
-		/*--->*/processList0=processList0.sort(processList0);
-		/*--->*/processList1=processList1.sort(processList1);
-		/*--->*/processList2=processList2.sort(processList2);
-		/*--->*/processList3=processList3.sort(processList3);
-		
-		
+		/*--->*/processQueue0=processQueue0.sort(processQueue0);
+		/*--->*/processQueue1=processQueue1.sort(processQueue1);
+		/*--->*/processQueue2=processQueue2.sort(processQueue2);
+		/*--->*/processQueue3=processQueue3.sort(processQueue3);
 	}	
 	
 
 	// Assagıda bulunun fonksiyonlar kuyrukları ayrı ayrı getirmek icin yazıldı
-	// İclerindeki return harici hersey debug icindir
+	// İclerindeki return harici her sey debug icindir
 	
 	
 	public Queue get_p0() {
@@ -175,7 +179,7 @@ public class Dispatcher {
 		
 		//<---------------------------------------DEBUG--------------------------------------->*/
 		
-		return processList0;
+		return processQueue0;
 	}
 	
 	public Queue get_p1() {
@@ -193,13 +197,13 @@ public class Dispatcher {
 		
 		//<---------------------------------------DEBUG--------------------------------------->*/
 
-		return processList1;
+		return processQueue1;
 
 	}
 	
 	public Queue get_p2() {
 		
-		/* <---------------------------------------TEST--------------------------------------->
+		/*/ <---------------------------------------TEST--------------------------------------->
 		System.out.println("P2 Cagirildi");
 
 		System.out.println("ArrivalT     "+"   Prio  "+"     ProsesT" );
@@ -211,15 +215,15 @@ public class Dispatcher {
 				
 		}
 		
-		*/
+		/*/
 		
-		return processList2;
+		return processQueue2;
 	
 	}
 	
 	public Queue get_p3() {
 		
-		/* <---------------------------------------TEST--------------------------------------->
+		/*/ <---------------------------------------TEST--------------------------------------->
 		System.out.println("P3 Cagirildi");
 
 		System.out.println("ArrivalT     "+"   Prio  "+"     ProsesT" );
@@ -231,9 +235,9 @@ public class Dispatcher {
 				
 		}
 		
-		*/
+		/*/
 		
-		return processList3;
+		return processQueue3;
 	}
 	
 	public static void wait(int seconds) {
@@ -244,5 +248,7 @@ public class Dispatcher {
 	    }
 	}
 	
-	
+	public Queue get_allProccesses() {// test
+		return _allProccesses;
+	}
 }

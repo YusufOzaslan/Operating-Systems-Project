@@ -54,12 +54,13 @@ public class myProcess extends Thread{
 		
 		//burdaki remainingTime'ın hesaplanması doğru olmaz çünkü askıya alınmış bir processin çalışmadığı zamanlarda da remainingTime'ı azalıyormuş gib oluyor
 		//onun yerine _remainingTime diye bir property yaptım, her çalıştığı saniye decreaseRemainingTime() fonksiyonunu çalıştırcak 
-		String remainingTime = String.valueOf(this._arrivalTime - Dispatcher.timer);
+		String remainingTime = String.valueOf(this._processorTime);
 		
 		String colorId = String.valueOf((this._colorId));
 		String processId = String.valueOf((this._id));
 		String jar = "java -jar Java_Process.jar";
-		String parameter = jar + " " + processId + " " + priority + " " + get_RemainingTime() + " " + colorId;
+		String parameter = jar + " " + processId + " " + priority + " " + remainingTime + " " + colorId;
+		//String parameter = jar + " " + processId + " " + priority + " " + get_RemainingTime() + " " + colorId;
 		
 		try {
 
@@ -96,11 +97,15 @@ public class myProcess extends Thread{
 		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses basladi 	 " + ANSI_RESET);
 	}
 	private void runningMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses yürütülüyor 	 " + ANSI_RESET);
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses yurutuluyor 	 " + ANSI_RESET);
 	}	
-	private void suspendedMessage() { System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askıda 	 " + ANSI_RESET); }
+	private void suspendedMessage() { 
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askida 	 " + ANSI_RESET); }
 	private void endMessage() {
-		System.out.println(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandı 	 " + ANSI_RESET);
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandi 	 " + ANSI_RESET);
+	}
+	private void overTimeMessage() {
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses zaman asimi 	 " + ANSI_RESET);
 	}	
 	
 	public boolean isComplete() {
@@ -112,6 +117,7 @@ public class myProcess extends Thread{
 	public int get_processorTime() { return _processorTime; }
 	public int get_RemainingTime() { return _remainingTime; }
 	public int get_colorId() { return this._colorId; }
+	
 	public void set_arrivalTime(int _arrivalTime) {
 		this._arrivalTime = _arrivalTime;
 	}
@@ -121,10 +127,10 @@ public class myProcess extends Thread{
 	public void set_processorTime(int _processorTime) {
 		this._processorTime = _processorTime;
 	}
+	
 	public void set_status(status _status) { this._status = _status; }
 	
-	public void decreaseRemainingTime() { this._remainingTime--; }
-	
+	public void decreaseRemainingTime() { this._remainingTime--; }	
 }
 	
 
