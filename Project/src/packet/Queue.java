@@ -18,27 +18,35 @@ public class Queue {
 	public List<myProcess> getProcessList() {//test
 		return processList;
 	}
+	
+	public Queue setProcessList(Queue queue, int index, myProcess process) {
+		queue.getProcessList().remove(index);
+		queue.getProcessList().add(index, process);
+		return queue;
+	}
 
 	public Queue sort(Queue queue) {// Varış zamanına göre sıralanır
 		
 		int n = queue.getProcessList().size();
- 
+		int tmpArrival_j;
+		int tmpArrival_min;
+		myProcess temp;
 		//SelectionShort ile sıraladık 
 		for (int i = 0; i < n-1; i++)
 		{
 	        
 			int min_idx = i;
 			for (int j = i+1; j < n; j++) {
-				int tmpArrival_j=queue.getProcessList().get(j).get_arrivalTime();
-				int tmpArrival_min=queue.getProcessList().get(min_idx).get_arrivalTime();      	
+				tmpArrival_j=queue.getProcessList().get(j).get_arrivalTime();
+				tmpArrival_min=queue.getProcessList().get(min_idx).get_arrivalTime();      	
 				
 				if ( tmpArrival_j < tmpArrival_min) {
 					min_idx = j;
 			    	}
 				}
-			int temp = queue.getProcessList().get(min_idx).get_arrivalTime(); ;
-			queue.getProcessList().get(min_idx).set_arrivalTime(queue.getProcessList().get(i).get_arrivalTime());
-			queue.getProcessList().get(i).set_arrivalTime(temp);
+			temp = queue.getProcessList().get(min_idx);
+			queue = queue.setProcessList(queue, min_idx, queue.getProcessList().get(i));
+			queue = queue.setProcessList(queue, i, temp);
 		}
 		return queue;
 	}

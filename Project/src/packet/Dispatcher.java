@@ -38,27 +38,35 @@ public class Dispatcher {
 	}
 	
 	public void runDispatcher() {
-		split_sort(_allProccesses);
+		//split_sort(_allProccesses);
+		this._allProccesses=this._allProccesses.sort(this._allProccesses);
+		
+		for(int i=0;i<_allProccesses.getProcessList().size();i++) {
 			
-		for (myProcess process : processQueue0.getProcessList()) {
+			System.out.print(_allProccesses.getProcessList().get(i).get_arrivalTime()+"  		  " );
+			System.out.print(_allProccesses.getProcessList().get(i).get_priority()+"        " );
+			System.out.println(_allProccesses.getProcessList().get(i).get_processorTime());
+			
+	}
+			
+		/*for (myProcess process : _allProccesses.getProcessList()) {
 			System.out.println(process.get_arrivalTime() + " " + timer);
 			//0 öncelikli processler FCFS ile çalışır
-			if (process.get_arrivalTime() <= timer) {
+			if (process.get_arrivalTime() <= timer && process.get_priority() == 0) {
 				for (int i = process.get_processorTime(); i >= 0; i--) {
 					temp = process.get_processorTime();
 					temp--;
 					process.execute();
 					process.set_processorTime(temp);
 					timer++;
-				}
-					
+				}					
 			}
 			//1, 2 veya 3 öncelikli processlere feedback sistemine gider
 			else {
 				//feedback(process);
 				timer++;
 			}
-		}
+		}*/
 		
 		
 		/*
