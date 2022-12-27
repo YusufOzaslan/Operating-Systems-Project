@@ -22,7 +22,7 @@ public class myProcess extends Thread{
 	private int _priority;
 	private int _processorTime;
 	private int _remainingTime;
-	private int _id;// gerek kalmayabilir
+	private int _id;
 	
 	private int _colorId;
 	static int colorNum = -1;
@@ -64,7 +64,7 @@ public class myProcess extends Thread{
 		
 		try {
 
-	           runProcess(parameter); 
+	          runProcess(parameter); 
 	    } 
 		catch (Exception e) {
 	    	e.printStackTrace();
@@ -89,23 +89,23 @@ public class myProcess extends Thread{
         BufferedReader in = new BufferedReader(
             new InputStreamReader(ins));
         while ((line = in.readLine()) != null) {
-            System.out.println(line);
+            System.out.println(" " +line);
         }
       }
 
-	private void executeMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses basladi 	 " + ANSI_RESET);
+    public void executeMessage() {
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses basladi		" + ANSI_RESET);
 	}
-	private void runningMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses yurutuluyor 	 " + ANSI_RESET);
+	public void runningMessage() {
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses yurutuluyor		" + ANSI_RESET);
 	}	
-	private void suspendedMessage() { 
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askida 	 " + ANSI_RESET); }
-	private void endMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandi 	 " + ANSI_RESET);
+	public void suspendedMessage() { 
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askida		" + ANSI_RESET); }
+	public void endMessage() {
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandi		" + ANSI_RESET);
 	}
-	private void overTimeMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses zaman asimi 	 " + ANSI_RESET);
+	public void overTimeMessage() {
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses zaman asimi 			" + ANSI_RESET);
 	}	
 	
 	public boolean isComplete() {

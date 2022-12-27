@@ -12,7 +12,7 @@ public class Queue {
 	}
 	
 	public void addProcess(myProcess process) {
-		processList.add(process);
+		processList.add(0, process);
 	}
 
 	public List<myProcess> getProcessList() {//test
