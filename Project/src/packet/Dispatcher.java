@@ -189,8 +189,10 @@ public class Dispatcher {
 			temp = process.get_processorTime();
 			temp--;
 			process.set_processorTime(temp);
-			if(process.get_processorTime() == 0)
+			if(process.get_processorTime() == 0) {
 				processQueue3.getProcessList().remove(0);
+			//baştan sil sona ekle
+				}
 			break;			
 		default:
 			System.out.println("Gecersiz priority degeri");
