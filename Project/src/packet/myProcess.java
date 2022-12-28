@@ -46,21 +46,16 @@ public class myProcess extends Thread{
 
 	}
 	
-	public void execute() {
+	public void execute() {// Java prosesleri çalıştırılır
 		// çalıştırılmak istenen proses için bu fonksiyon kullanılır
-		// proses oluşturduğumuz jar dosyasını çalıştırır
+		// proses, oluşturduğumuz jar dosyasını çalıştırır
 
 		String priority = String.valueOf(this._priority);
-		
-		//burdaki remainingTime'ın hesaplanması doğru olmaz çünkü askıya alınmış bir processin çalışmadığı zamanlarda da remainingTime'ı azalıyormuş gib oluyor
-		//onun yerine _remainingTime diye bir property yaptım, her çalıştığı saniye decreaseRemainingTime() fonksiyonunu çalıştırcak 
 		String remainingTime = String.valueOf(this._processorTime);
-		
 		String colorId = String.valueOf((this._colorId));
 		String processId = String.valueOf((this._id));
 		String jar = "java -jar Java_Process.jar";
 		String parameter = jar + " " + processId + " " + priority + " " + remainingTime + " " + colorId;
-		//String parameter = jar + " " + processId + " " + priority + " " + get_RemainingTime() + " " + colorId;
 		
 		try {
 
@@ -94,23 +89,19 @@ public class myProcess extends Thread{
       }
 
     public void executeMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses basladi		" + ANSI_RESET);
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses basladi			" + ANSI_RESET);
 	}
 	public void runningMessage() {
 		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses yurutuluyor		" + ANSI_RESET);
 	}	
 	public void suspendedMessage() { 
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askida		" + ANSI_RESET); }
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses askida			" + ANSI_RESET); }
 	public void endMessage() {
 		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses sonlandi		" + ANSI_RESET);
 	}
 	public void overTimeMessage() {
-		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses zaman asimi 			" + ANSI_RESET);
-	}	
-	
-	public boolean isComplete() {
-	    return _remainingTime == 0;
-	  }
+		System.out.print(COLORS[get_colorId()] + Dispatcher.timer + " sn proses zaman asimi 		" + ANSI_RESET);
+	}
 	
 	public int get_arrivalTime() { return _arrivalTime; }
 	public int get_priority() { return _priority; }
@@ -129,8 +120,6 @@ public class myProcess extends Thread{
 	}
 	
 	public void set_status(status _status) { this._status = _status; }
-	
-	public void decreaseRemainingTime() { this._remainingTime--; }	
 }
 	
 

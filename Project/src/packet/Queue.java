@@ -11,8 +11,11 @@ public class Queue {
 	public Queue(){
 	}
 	
+	public void addProcessByIndex(int index, myProcess process) {
+		processList.add(index, process);
+	}
 	public void addProcess(myProcess process) {
-		processList.add(0, process);
+		processList.add(process);
 	}
 
 	public List<myProcess> getProcessList() {//test
