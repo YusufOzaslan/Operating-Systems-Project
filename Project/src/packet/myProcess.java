@@ -41,7 +41,7 @@ public class myProcess extends Thread{
 		
 		//her proses oluşturulduğunda farklı bir renk atanır
 		colorNum++;
-		if (colorNum > COLORS.length) { colorNum = 0; }
+		if (colorNum >= COLORS.length) { colorNum = 0; }
 		_colorId = colorNum;
 
 	}
