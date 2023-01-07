@@ -127,11 +127,11 @@ public class Dispatcher {
 		
 		case 1:
 			process.executeMessage();
-			process.execute();
+			process.execute(); 
 			// proses zamanı azaltılır
 			temp = process.get_processorTime();
 			temp--;
-			process.set_processorTime(temp);
+			process.set_processorTime(temp);   
 			// öncelik değeri arttırılır
 			temp = process.get_priority();
 			temp++;
