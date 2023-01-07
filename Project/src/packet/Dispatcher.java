@@ -28,56 +28,68 @@ public class Dispatcher {
 	public static int timer = 0;
 	// yeni prosesler üretildikçe değeri arttırılır(myProcess sınıfında kullanılır)
 	public static int idCounter = 0;
-	
+	int couneter=0;
+	int _size=0;
+
 	private int temp;
 	private boolean startCheck = true;
 	
 	public Dispatcher(Queue allProccesses){
 		_allProccesses = allProccesses;
+		_size=_allProccesses.getProcessList().size();
 	}
 	
 	public void runDispatcher() {
 		split_sort(_allProccesses);
 		myProcess process;
 		
-		for (int i = 0; i < processQueue0.getProcessList().size(); i++) {
-			startCheck = true;
-			//q0 kuyruğunda sıradaki proses seçilir
-			process = processQueue0.getProcessList().get(i);
-			//0 öncelikli processler FCFS ile çalışır
-			if (process.get_arrivalTime() <= timer && !processQueue0.isEmpty()) {
-				for (int j = process.get_processorTime(); j > 0; j--) {					
-					if(startCheck) {
-						// ilk önce proses başladı mesajı yazılır
-						process.executeMessage();
-						startCheck = false;
+		if(processQueue0.getProcessList().size()>0) {
+	
+			for (int i = 0; i < processQueue0.getProcessList().size(); i++) {
+				startCheck = true;
+				//q0 kuyruğunda sıradaki proses seçilir
+					process = processQueue0.getProcessList().get(i);
+					//0 öncelikli processler FCFS ile çalışır
+					if (process.get_arrivalTime() <= timer && !processQueue0.isEmpty()) {
+						for (int j = process.get_processorTime(); j > 0; j--) {					
+							if(startCheck) {
+								// ilk önce proses başladı mesajı yazılır
+								process.executeMessage();
+								startCheck = false;
+							}
+							else{
+								process.runningMessage();
+							}
+							// proses zamanı azaltılır
+							temp = process.get_processorTime();
+							temp--;
+							process.execute();
+							process.set_processorTime(temp);
+							// Askı kontrolü yapılır
+							suspendControl();
+							timer++;
+						}
+						process.endMessage();
+						process.execute();
 					}
-					else{
-						process.runningMessage();
+					//1, 2 veya 3 öncelikli prosesler için feedback fonksiyonuna gidilir
+					else {
+						feedback();
+						suspendControl();
+						i--;
 					}
-					// proses zamanı azaltılır
-					temp = process.get_processorTime();
-					temp--;
-					process.execute();
-					process.set_processorTime(temp);
-					// Askı kontrolü yapılır
-					suspendControl();
-					timer++;
-				}
-				process.endMessage();
-				process.execute();
-			}
-			//1, 2 veya 3 öncelikli prosesler için feedback fonksiyonuna gidilir
-			else {
-				feedback();
-				suspendControl();
-				i--;
-			}
-		}.
-		while(!processQueue3.isEmpty() || !suspendQueue3.isEmpty()) {
+			}			
+		}
+		while(processQueue1.getProcessList().size()>0 ||
+			  processQueue2.getProcessList().size()>0 ||
+			  processQueue3.getProcessList().size()>0 ||
+			  suspendQueue2.getProcessList().size()>0 ||
+			  suspendQueue3.getProcessList().size()>0)
+		{
 			feedback();
 			suspendControl();
 		}
+		
 	}
 	
 	private void feedback() {// bu fonksiyon daha tamamlanmadı
@@ -96,7 +108,7 @@ public class Dispatcher {
 		if(!suspendQueue2.isEmpty()) {
 			process2 = suspendQueue2.getProcessList().get(0);
 		}
-		else if(!processQueue1.isEmpty()) {
+		else if(!processQueue2.isEmpty()) {
 			process2 = processQueue2.getProcessList().get(0);
 		}
 		else process2 = null;
@@ -127,11 +139,11 @@ public class Dispatcher {
 		
 		case 1:
 			process.executeMessage();
-			process.execute(); 
+			process.execute();
 			// proses zamanı azaltılır
 			temp = process.get_processorTime();
 			temp--;
-			process.set_processorTime(temp);   
+			process.set_processorTime(temp);
 			// öncelik değeri arttırılır
 			temp = process.get_priority();
 			temp++;
@@ -179,14 +191,19 @@ public class Dispatcher {
 					suspendQueue3.addProcess(process);
 					process.execute();
 					suspendQueue2.getProcessList().remove(0);
+					
+					
+					
 				} else {// proses ilk kez çalışıyor ise
 					process.suspendedMessage();
 					suspendQueue3.addProcess(process);
 					process.execute();
 					processQueue2.getProcessList().remove(0);
+					
+					
 				}
 			}
-			
+			System.out.println("suspendQueue3: "+suspendQueue3.getProcessList().size());
 			break;			
 		case 3:
 			process.executeMessage();
@@ -210,21 +227,39 @@ public class Dispatcher {
 
 				}
 			}
+			/*
+			 * BU ALT KISIMDA BİR HATA VAR SANIRIM  SADECE 2 ONCELİK DEGERLERİNDEN OLUSAN PROSES LİSTESİ VERDİGİMDE DÜZGÜN CALISIYOR
+			 * 															AMA
+			 * YALNIZCA 3 ÖNCELİKLİ VERDİĞİMDE VERDİĞİ CIKTILAR HATALI
+			 * 
+			 * 
+			 * hatalı commit icin üzgünüm :/
+			 * 
+			 * 
+			 */
 			else {
-				if(processQueue3.getProcessList().contains(process)) {
-					// proses ilk kez çalışıyor ise (processQueue3 kuyruğundan alındı)
+				System.out.print("****************************"+suspendQueue3.getProcessList().contains(process));
+				if (suspendQueue3.getProcessList().contains(process)) {// proses askıya alınan kuyruktan çalışıyor ise
+
+					process.suspendedMessage();
+					suspendQueue3.addProcess(process);
+					process.execute();
+					suspendQueue3.getProcessList().remove(0);
+					
+				} else {// proses ilk kez çalışıyor ise
+
 					process.suspendedMessage();
 					suspendQueue3.addProcess(process);
 					process.execute();
 					processQueue3.getProcessList().remove(0);
 				}
-				else {// process suspendQueue3 kuyruğunda ise
-					process.suspendedMessage();
-					suspendQueue3.addProcess(process);
-					process.execute();
-					suspendQueue3.getProcessList().remove(0);
-				}
 			}
+			System.out.println("AFTERsuspendQueue3: "+suspendQueue3.getProcessList().size());
+			
+			/*
+			 * HATA BU ARADA Bİ YERDE SANIRIM ÜST
+			 */
+
 			break;			
 		default:
 			System.out.println("Gecersiz priority degeri");
@@ -257,7 +292,8 @@ public class Dispatcher {
 			}
 		}
 		else {
-			System.out.println("return " + timer);
+			timer++;
+			System.out.println("time is " + timer);
 			return;
 		}
 	}
