@@ -1,17 +1,4 @@
 package packet;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Timer;
-import java.util.stream.Collectors;
-import java.util.stream.*;  
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-import java.util.Timer;
-import java.util.TimerTask;
-
-
 public class Dispatcher {
 	
 	private Queue _allProccesses = new Queue();
@@ -32,7 +19,6 @@ public class Dispatcher {
 	private int temp;
 	private boolean startCheck = true;
 	
-
 	public Dispatcher(Queue allProccesses){
 		_allProccesses = allProccesses;
 	}
@@ -93,7 +79,7 @@ public class Dispatcher {
 		
 	}
 	
-	private void feedback() {
+	private void feedback() {// bu fonksiyon daha tamamlanmadı
 		myProcess process;		
 		myProcess process1;
 		myProcess process2;
@@ -107,18 +93,16 @@ public class Dispatcher {
 		
 		if(!processQueue2.isEmpty()) {
 			process2 = processQueue2.getProcessList().get(0);
-			
 		}
 		else if(!suspendQueue2.isEmpty()) {
 			process2 = suspendQueue2.getProcessList().get(0);
 		}
 		else process2 = null;
 		
-		if(!processQueue3.isEmpty() ) {
+		if(!processQueue3.isEmpty()) {
 			process3 = processQueue3.getProcessList().get(0);
-		
 		}
-		else if(!suspendQueue3.isEmpty() ) {
+		else if(!suspendQueue3.isEmpty()) {
 			process3 = suspendQueue3.getProcessList().get(0);
 		}
 		else process3 = null;
@@ -259,7 +243,6 @@ public class Dispatcher {
 			process = suspendQueue2.getProcessList().get(0);
 			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
-				//System.out.println("dif " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
 				process.execute();
@@ -270,7 +253,6 @@ public class Dispatcher {
 			process = suspendQueue3.getProcessList().get(0);
 			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
-				//System.out.println("dif: " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
 				process.execute();
@@ -291,7 +273,6 @@ public class Dispatcher {
 			process = processQueue1.getProcessList().get(0);
 			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
-				//System.out.println("dif: " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
 				process.execute();
@@ -302,7 +283,6 @@ public class Dispatcher {
 			process = processQueue2.getProcessList().get(0);
 			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
-				//System.out.println("dif: " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
 				process.execute();
@@ -313,7 +293,6 @@ public class Dispatcher {
 			process = processQueue3.getProcessList().get(0);
 			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
-				//System.out.println("dif: " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
 				process.execute();
@@ -321,24 +300,18 @@ public class Dispatcher {
 			}
 		}
 		else {
-			//System.out.println("time is " + timer);
 			return;
 		}
 	}
 	
-	
-	public void split_sort(Queue processList) {
-		
-		// _allProccesse'de bulunan prosesler öncelikli kuyruklara eklenir(_priority değişkenine göre)
+	public void split_sort(Queue processList) {		
+		// _allProccesse'de bulunan prosesler öncelikli kuyruklara eklenir(_priority değişkenine göre)	
 		for(int i=0;i<processList.getProcessList().size() ; i++)
-		{
-			
-			int tempPriority=processList.getProcessList().get(i).get_priority();
-		
+		{			
+			int tempPriority=processList.getProcessList().get(i).get_priority();		
 			if( tempPriority == 0) {
 				processQueue0.addProcess(processList.getProcessList().get(i));
-			}
-			
+			}			
 			else if( tempPriority == 1) {
 				processQueue1.addProcess(processList.getProcessList().get(i));
 			}

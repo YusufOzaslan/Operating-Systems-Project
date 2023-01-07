@@ -1,15 +1,11 @@
 package packet;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
 public class Queue {
 	
 	private List<myProcess> processList = new LinkedList<myProcess>();
-	
-	public Queue(){
-	}
 	
 	public void addProcessByIndex(int index, myProcess process) {
 		processList.add(index, process);
@@ -18,7 +14,7 @@ public class Queue {
 		processList.add(process);
 	}
 
-	public List<myProcess> getProcessList() {//test
+	public List<myProcess> getProcessList() {
 		return processList;
 	}
 	
@@ -28,8 +24,8 @@ public class Queue {
 		return queue;
 	}
 
-	public Queue sort(Queue queue) {// Varış zamanına göre sıralanır
-		
+	public Queue sort(Queue queue) {
+		// Varış zamanına göre sıralanır		
 		int n = queue.getProcessList().size();
 		int tmpArrival_j;
 		int tmpArrival_min;
@@ -37,7 +33,6 @@ public class Queue {
 		//SelectionShort ile sıraladık 
 		for (int i = 0; i < n-1; i++)
 		{
-	        
 			int min_idx = i;
 			for (int j = i+1; j < n; j++) {
 				tmpArrival_j=queue.getProcessList().get(j).get_arrivalTime();

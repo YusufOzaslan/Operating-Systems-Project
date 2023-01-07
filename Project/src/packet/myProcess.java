@@ -43,10 +43,8 @@ public class myProcess extends Thread{
 		String colorId = String.valueOf((this._colorId));
 		String processId = String.valueOf((this._id));
 		String jar = "java -jar Java_Process.jar";
-		String parameter = jar + " " + processId + " " + priority + " " + remainingTime + " " + colorId;
-		
+		String parameter = jar + " " + processId + " " + priority + " " + remainingTime + " " + colorId;		
 		try {
-
 	          runProcess(parameter); 
 	    } 
 		catch (Exception e) {
@@ -55,14 +53,11 @@ public class myProcess extends Thread{
 	}
 	
 	//bu fonksiyon static'ti ama şimdilik değiştirdim deneme için
-	private void runProcess(String command) throws Exception {
-		
+	private void runProcess(String command) throws Exception {		
 		// yeni bir proses oluşturulur ve çalıştırılır
-        Process pro = Runtime.getRuntime().exec(command);
-    	
+        Process pro = Runtime.getRuntime().exec(command);    	
         printLines(pro.getInputStream());
-        printLines(pro.getErrorStream());
-    
+        printLines(pro.getErrorStream());    
         pro.waitFor();// proses bitene kadar beklenir
       }
 	
