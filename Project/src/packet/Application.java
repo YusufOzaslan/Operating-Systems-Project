@@ -16,20 +16,7 @@ public class Application {
 		
 		Dispatcher dispatcher = new Dispatcher(readProcess());
 		dispatcher.runDispatcher();
-		//<----------------TEST-------------------->
 		
-		
-		/*/dispatcher.split_sort(dispatcher.get_allProccesses());
-		dispatcher.get_p0();	
-		dispatcher.get_p1();
-		dispatcher.get_p2();
-		dispatcher.get_p3();
-		
-			
-		//<---------------TEST-------------------------->*/
-		// process test
-		/*myProcess mp = new myProcess("5", "5", "5");
-		mp.execute();*/
 	}
 	
 	private static Queue readProcess()  throws Exception{
