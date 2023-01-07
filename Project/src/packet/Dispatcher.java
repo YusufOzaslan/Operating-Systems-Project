@@ -113,11 +113,12 @@ public class Dispatcher {
 		}
 		else process2 = null;
 		
-		if(!suspendQueue3.isEmpty()) {
-			process3 = suspendQueue3.getProcessList().get(0);
-		}
-		else if(!processQueue3.isEmpty()) {
+		// hatanın sebebi burda susbend'e attıgımız processi diger adımda tekrar susbedden almamızdı
+		if(!processQueue3.isEmpty()) {
 			process3 = processQueue3.getProcessList().get(0);
+		}
+		else if(!suspendQueue3.isEmpty()) {
+			process3 = suspendQueue3.getProcessList().get(0);
 		}
 		else process3 = null;
 		
@@ -228,17 +229,13 @@ public class Dispatcher {
 				}
 			}
 			/*
-			 * BU ALT KISIMDA BİR HATA VAR SANIRIM  SADECE 2 ONCELİK DEGERLERİNDEN OLUSAN PROSES LİSTESİ VERDİGİMDE DÜZGÜN CALISIYOR
-			 * 															AMA
-			 * YALNIZCA 3 ÖNCELİKLİ VERDİĞİMDE VERDİĞİ CIKTILAR HATALI
 			 * 
+			 * Onceki committe bahsettigim hata cözüldü
 			 * 
-			 * hatalı commit icin üzgünüm :/
-			 * 
+			 * son kontrolleri yapabiliriz.
 			 * 
 			 */
 			else {
-				System.out.print("****************************"+suspendQueue3.getProcessList().contains(process));
 				if (suspendQueue3.getProcessList().contains(process)) {// proses askıya alınan kuyruktan çalışıyor ise
 
 					process.suspendedMessage();
@@ -254,11 +251,8 @@ public class Dispatcher {
 					processQueue3.getProcessList().remove(0);
 				}
 			}
-			System.out.println("AFTERsuspendQueue3: "+suspendQueue3.getProcessList().size());
 			
-			/*
-			 * HATA BU ARADA Bİ YERDE SANIRIM ÜST
-			 */
+		
 
 			break;			
 		default:
