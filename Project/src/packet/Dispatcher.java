@@ -28,15 +28,15 @@ public class Dispatcher {
 	public static int timer = 0;
 	// yeni prosesler üretildikçe değeri arttırılır(myProcess sınıfında kullanılır)
 	public static int idCounter = 0;
-	int couneter=0;
-	int _size=0;
 
 	private int temp;
 	private boolean startCheck = true;
 	
+	private boolean flag1 = true;
+	private boolean flag2 = true;
+	
 	public Dispatcher(Queue allProccesses){
 		_allProccesses = allProccesses;
-		_size=_allProccesses.getProcessList().size();
 	}
 	
 	public void runDispatcher() {
@@ -50,7 +50,7 @@ public class Dispatcher {
 				//q0 kuyruğunda sıradaki proses seçilir
 					process = processQueue0.getProcessList().get(i);
 					//0 öncelikli processler FCFS ile çalışır
-					if (process.get_arrivalTime() <= timer && !processQueue0.isEmpty()) {
+					if (process.get_arrivalTime() <= timer) {
 						for (int j = process.get_processorTime(); j > 0; j--) {					
 							if(startCheck) {
 								// ilk önce proses başladı mesajı yazılır
@@ -66,16 +66,19 @@ public class Dispatcher {
 							process.execute();
 							process.set_processorTime(temp);
 							// Askı kontrolü yapılır
-							suspendControl();
+							timeoutCheck();
 							timer++;
 						}
 						process.endMessage();
 						process.execute();
+						// prosesin en son çalıştığı zaman kaydedilir
+						// max değer verilerek kuyruktan çıkarıldığı varsayıldı
+						process.set_lastCallTime(2147483647);
 					}
 					//1, 2 veya 3 öncelikli prosesler için feedback fonksiyonuna gidilir
 					else {
 						feedback();
-						suspendControl();
+						timeoutCheck();
 						i--;
 					}
 			}			
@@ -87,14 +90,13 @@ public class Dispatcher {
 			  suspendQueue3.getProcessList().size()>0)
 		{
 			feedback();
-			suspendControl();
+			timeoutCheck();
 		}
 		
 	}
 	
 	private void feedback() {// bu fonksiyon daha tamamlanmadı
-		myProcess process;
-		
+		myProcess process;		
 		myProcess process1;
 		myProcess process2;
 		myProcess process3;
@@ -105,19 +107,25 @@ public class Dispatcher {
 		}
 		else process1 = null;
 		
-		if(!suspendQueue2.isEmpty()) {
+		if(!suspendQueue2.isEmpty() && flag1) {
 			process2 = suspendQueue2.getProcessList().get(0);
+			if(!processQueue2.isEmpty()){flag1 = false;}
+			else {flag1 = true;}
 		}
 		else if(!processQueue2.isEmpty()) {
 			process2 = processQueue2.getProcessList().get(0);
+			flag1 = true;
 		}
 		else process2 = null;
 		
-		if(!suspendQueue3.isEmpty()) {
+		if(!suspendQueue3.isEmpty() && flag2) {
 			process3 = suspendQueue3.getProcessList().get(0);
+			if(!processQueue3.isEmpty()){flag2 = false;}
+			else {flag2 = true;}
 		}
-		else if(!processQueue3.isEmpty()) {
+		else if(!processQueue3.isEmpty() && !flag2) {
 			process3 = processQueue3.getProcessList().get(0);
+			flag2 = true;
 		}
 		else process3 = null;
 		
@@ -132,9 +140,9 @@ public class Dispatcher {
 			process = process3;
 		}
 		else {// hiçbir prosesin zamanı gelmediyse fonksiyondan çıkılır
+			timer++;
 			return;
 		}
-		System.out.println(timer - process.get_arrivalTime() + " " + process.get_arrivalTime() + " " + timer);
 		switch(process.get_priority()) {
 		
 		case 1:
@@ -149,6 +157,8 @@ public class Dispatcher {
 			temp++;
 			process.set_priority(temp);
 			timer++;
+			// prosesin en son çalıştığı zaman kaydedilir
+			process.set_lastCallTime(timer);
 			if (process.get_processorTime() == 0) {
 				//süresi biten proses sonlanır
 				process.endMessage();
@@ -174,6 +184,8 @@ public class Dispatcher {
 			temp++;
 			process.set_priority(temp);
 			timer++;
+			// prosesin en son çalıştığı zaman kaydedilir
+			process.set_lastCallTime(timer);
 			if(process.get_processorTime() == 0) {// proses süresi biterse
 				if (suspendQueue2.getProcessList().contains(process)) {// proses askıya alınan kuyruktan çalışıyor ise
 					process.endMessage();
@@ -186,24 +198,20 @@ public class Dispatcher {
 				}
 			}
 			else {
-				if (suspendQueue2.getProcessList().contains(process)) {// proses askıya alınan kuyruktan çalışıyor ise
+				if (suspendQueue2.getProcessList().contains(process)) {
+					// proses askıya alınan kuyruktan çalışıyor ise
 					process.suspendedMessage();
 					suspendQueue3.addProcess(process);
 					process.execute();
 					suspendQueue2.getProcessList().remove(0);
-					
-					
-					
 				} else {// proses ilk kez çalışıyor ise
 					process.suspendedMessage();
 					suspendQueue3.addProcess(process);
 					process.execute();
 					processQueue2.getProcessList().remove(0);
-					
-					
 				}
 			}
-			System.out.println("suspendQueue3: "+suspendQueue3.getProcessList().size());
+			//System.out.println("suspendQueue3: "+suspendQueue3.getProcessList().size());
 			break;			
 		case 3:
 			process.executeMessage();
@@ -213,7 +221,8 @@ public class Dispatcher {
 			temp--;
 			process.set_processorTime(temp);
 			timer++;
-			
+			// prosesin en son çalıştığı zaman kaydedilir
+			process.set_lastCallTime(timer);			
 			if(process.get_processorTime() == 0) {// proses süresi biterse
 				if(processQueue3.getProcessList().contains(process)) {// proses processQueue3 kuyruğunda ise
 					process.endMessage();
@@ -227,20 +236,9 @@ public class Dispatcher {
 
 				}
 			}
-			/*
-			 * BU ALT KISIMDA BİR HATA VAR SANIRIM  SADECE 2 ONCELİK DEGERLERİNDEN OLUSAN PROSES LİSTESİ VERDİGİMDE DÜZGÜN CALISIYOR
-			 * 															AMA
-			 * YALNIZCA 3 ÖNCELİKLİ VERDİĞİMDE VERDİĞİ CIKTILAR HATALI
-			 * 
-			 * 
-			 * 
-			 * 
-			 * 
-			 */
 			else {
-				System.out.print("****************************"+suspendQueue3.getProcessList().contains(process));
-				if (suspendQueue3.getProcessList().contains(process)) {// proses askıya alınan kuyruktan çalışıyor ise
-
+				if (suspendQueue3.getProcessList().contains(process)) {
+					// proses askıya alınan kuyruktan çalışıyor ise
 					process.suspendedMessage();
 					suspendQueue3.addProcess(process);
 					process.execute();
@@ -254,12 +252,6 @@ public class Dispatcher {
 					processQueue3.getProcessList().remove(0);
 				}
 			}
-			System.out.println("AFTERsuspendQueue3: "+suspendQueue3.getProcessList().size());
-			
-			/*
-			 * HATA BU ARADA Bİ YERDE SANIRIM ÜST
-			 */
-
 			break;			
 		default:
 			System.out.println("Gecersiz priority degeri");
@@ -267,12 +259,12 @@ public class Dispatcher {
 		}			
 	}
 	
-	public void suspendControl() {
+	public void timeoutCheck() {
 		myProcess process;
 		int dif = 0;
 		if(!suspendQueue2.isEmpty()) {
 			process = suspendQueue2.getProcessList().get(0);
-			dif = timer - (process.get_arrivalTime() + process.get_processorTime());
+			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {
 				System.out.println("dif " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
@@ -281,9 +273,9 @@ public class Dispatcher {
 				suspendQueue2.getProcessList().remove(0);
 			}
 		}
-		else if(!suspendQueue3.isEmpty()) {
+		if(!suspendQueue3.isEmpty()) {
 			process = suspendQueue3.getProcessList().get(0);
-			dif = timer - (process.get_arrivalTime() + process.get_processorTime());
+			dif = timer - process.get_lastCallTime();
 			if (dif == 20) {System.out.println("dif: " + dif + "  timer: " + timer);
 				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
 				process.overTimeMessage();
@@ -291,8 +283,47 @@ public class Dispatcher {
 				suspendQueue3.getProcessList().remove(0);
 			}
 		}
+		if(!processQueue0.isEmpty()) {
+			process = processQueue0.getProcessList().get(0);
+			dif = timer - process.get_lastCallTime();
+			if (dif == 20) {
+				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
+				process.overTimeMessage();
+				process.execute();
+				processQueue0.getProcessList().remove(0);
+			}
+		}
+		if(!processQueue1.isEmpty()) {
+			process = processQueue1.getProcessList().get(0);
+			dif = timer - process.get_lastCallTime();
+			if (dif == 20) {System.out.println("dif: " + dif + "  timer: " + timer);
+				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
+				process.overTimeMessage();
+				process.execute();
+				processQueue1.getProcessList().remove(0);
+			}
+		}
+		if(!processQueue2.isEmpty()) {
+			process = processQueue2.getProcessList().get(0);
+			dif = timer - process.get_lastCallTime();
+			if (dif == 20) {System.out.println("dif: " + dif + "  timer: " + timer);
+				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
+				process.overTimeMessage();
+				process.execute();
+				processQueue2.getProcessList().remove(0);
+			}
+		}
+		if(!processQueue3.isEmpty()) {
+			process = processQueue3.getProcessList().get(0);
+			dif = timer - process.get_lastCallTime();
+			if (dif == 20) {System.out.println("dif: " + dif + "  timer: " + timer);
+				// askıya alınan proses 20 saniye beklerse zaman aşımına uğrar
+				process.overTimeMessage();
+				process.execute();
+				processQueue3.getProcessList().remove(0);
+			}
+		}
 		else {
-			timer++;
 			System.out.println("time is " + timer);
 			return;
 		}
@@ -327,10 +358,10 @@ public class Dispatcher {
 		}
 		
 		//Yukarıda priortiy'e gore sıraladık ardından kendi iclerinde arrivalTime'a gore sıralamak icin bunları kullandık --->
-		/*--->*/processQueue0=processQueue0.sort(processQueue0);
-		/*--->*/processQueue1=processQueue1.sort(processQueue1);
-		/*--->*/processQueue2=processQueue2.sort(processQueue2);
-		/*--->*/processQueue3=processQueue3.sort(processQueue3);
+		/*--->*/if(!processQueue0.isEmpty()) {processQueue0=processQueue0.sort(processQueue0);}
+		/*--->*/if(!processQueue1.isEmpty()) {processQueue1=processQueue1.sort(processQueue1);}
+		/*--->*/if(!processQueue2.isEmpty()) {processQueue2=processQueue2.sort(processQueue2);}
+		/*--->*/if(!processQueue3.isEmpty()) {processQueue3=processQueue3.sort(processQueue3);}
 	}	
 	
 	public Queue get_allProccesses() {// test

@@ -7,15 +7,6 @@ import java.io.InputStreamReader;
 
 import static packet.ColoredSystemOutPrintln.COLORS;
 
-enum status {
-      Hazir,
-	  Basladi,
-	  Askida,
-	  yurutuluyor,
-	  zamanasimi,
-	  sonlandi
-	}
-
 public class myProcess extends Thread{
 	
 	private int _arrivalTime;
@@ -23,19 +14,16 @@ public class myProcess extends Thread{
 	private int _processorTime;
 	private int _remainingTime;
 	private int _id;
-	
+	private int _lastCallTime;
 	private int _colorId;
 	static int colorNum = -1;
-
-	public status _status;
 
 	public myProcess(String arrivalTime, String priority, String processorTime){		
 		_arrivalTime = Integer.parseInt(arrivalTime);
 		_priority = Integer.parseInt(priority);
 		_processorTime = Integer.parseInt(processorTime);
 		_remainingTime = Integer.parseInt(processorTime);
-		_status=status.Hazir;
-		
+		_lastCallTime = _arrivalTime;
 		_id = Dispatcher.idCounter;
 		Dispatcher.idCounter++;
 		
@@ -107,19 +95,13 @@ public class myProcess extends Thread{
 	public int get_priority() { return _priority; }
 	public int get_processorTime() { return _processorTime; }
 	public int get_RemainingTime() { return _remainingTime; }
+	public int get_lastCallTime() {return _lastCallTime;}
 	public int get_colorId() { return this._colorId; }
 	
-	public void set_arrivalTime(int _arrivalTime) {
-		this._arrivalTime = _arrivalTime;
-	}
-	public void set_priority(int _priority) {
-		this._priority = _priority;
-	}
-	public void set_processorTime(int _processorTime) {
-		this._processorTime = _processorTime;
-	}
-	
-	public void set_status(status _status) { this._status = _status; }
+	public void set_lastCallTime(int _lastCallTime) {this._lastCallTime = _lastCallTime;}
+	public void set_arrivalTime(int _arrivalTime) {this._arrivalTime = _arrivalTime;}
+	public void set_priority(int _priority) {this._priority = _priority;}
+	public void set_processorTime(int _processorTime) {this._processorTime = _processorTime;}
 }
 	
 
